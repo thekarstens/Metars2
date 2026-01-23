@@ -1,69 +1,487 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>Apr 2018 Case Study – METAR + Wind Arrows + Daily Particles + Alerts</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Local Leaflet in your repo -->
-<link rel="stylesheet" href="./leaflet.css"/>
-<script src="./leaflet.js"></script>
-
-<!-- Leaflet Velocity (WORKING CDN) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet-velocity@2.1.4/dist/leaflet-velocity.css"/>
-<script src="https://unpkg.com/leaflet-velocity@2.1.4/dist/leaflet-velocity.js"></script>
-
-<style>
-  html, body { height:100%; margin:0; }
-  #map { height:100%; background:#fff; }
-
-  .panel{
-    position:absolute; top:10px; left:10px; z-index:9999;
-    background:rgba(255,255,255,0.95);
-    border:1px solid #ccc; border-radius:12px;
-    padding:10px;
-    font:600 12px/1.2 Arial, sans-serif;
-    box-shadow: 0 2px 10px rgba(0,0,0,.10);
-    min-width: 330px;
-  }
-  .row{ display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
-  .btn{
-    border:1px solid #333; background:#fff; border-radius:10px;
-    padding:6px 10px; cursor:pointer; font:700 12px Arial;
-  }
-  .btn:active{ transform: translateY(1px); }
-  .mono{ font-family: ui-monospace, Menlo, Consolas, monospace; font-weight:800; }
-
-  .dot{
-    border-radius:50%;
-    border:2px solid #333;
-    display:flex;align-items:center;justify-content:center;
-    font:800 12px/1 Arial, sans-serif;color:#111;
-    box-shadow: 0 1px 3px rgba(0,0,0,.25);
-    user-select:none;
-  }
-
-  .swatch {
-    display:inline-block;
-    width:12px; height:12px;
-    border:1px solid #333;
-    border-radius:2px;
-    vertical-align:middle;
-    margin-right:6px;
-  }
-
-  .tiny {
-    font:600 11px/1.2 Arial, sans-serif;
-    opacity:.78;
-  }
-
-/* Observed radar styling */
-.obs-radar { filter: brightness(1.22) contrast(1.08) saturate(1.05); mix-blend-mode: multiply; }
-</style>
-</head>
-
-<body>
-<div id="map"></div>
+<body class="">
+<div id="banner" class="tvbanner">APR 2018 CASE STUDY</div>
+<div id="map" class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative; outline-style: none;"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(-1134px, 1318.79px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 19; transform: translate3d(172px, -206px, 0px) scale(1);"><img alt="" src="https://a.basemaps.cartocdn.com/light_nolabels/6/14/22.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1223px, -1031px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/light_nolabels/6/15/22.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1479px, -1031px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/light_nolabels/6/14/23.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1223px, -775px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/light_nolabels/6/15/23.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1479px, -775px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/light_nolabels/6/14/21.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1223px, -1287px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/light_nolabels/6/15/21.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1479px, -1287px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/light_nolabels/6/14/24.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1223px, -519px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/light_nolabels/6/15/24.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1479px, -519px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/light_nolabels/6/13/22.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(967px, -1031px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/light_nolabels/6/16/22.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1735px, -1031px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/light_nolabels/6/13/23.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(967px, -775px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/light_nolabels/6/16/23.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1735px, -775px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/light_nolabels/6/13/21.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(967px, -1287px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/light_nolabels/6/16/21.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1735px, -1287px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/light_nolabels/6/13/24.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(967px, -519px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/light_nolabels/6/16/24.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1735px, -519px, 0px); opacity: 1;"><img alt="" src="https://b.basemaps.cartocdn.com/light_nolabels/6/12/22.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(711px, -1031px, 0px); opacity: 1;"><img alt="" src="https://c.basemaps.cartocdn.com/light_nolabels/6/12/23.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(711px, -775px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/light_nolabels/6/12/21.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(711px, -1287px, 0px); opacity: 1;"><img alt="" src="https://a.basemaps.cartocdn.com/light_nolabels/6/12/24.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(711px, -519px, 0px); opacity: 1;"></div><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(-9px, 5px, 0px) scale(2);"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"><svg pointer-events="none" class="leaflet-zoom-animated" width="1235" height="757" viewBox="1031 -1382 1235 757" style="transform: translate3d(1031px, -1382px, 0px);"><g></g></svg><canvas class="leaflet-layer leaflet-zoom-animated velocity-overlay" width="1029" height="631" style="transform: translate3d(1134px, -1318.79px, 0px);"></canvas></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1313px, -914px, 0px); z-index: -914;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(60,130,228);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1433px, -1011px, 0px); z-index: -1011;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,160,20);
+                     border-color:#333;
+                     font-size:12px;">39</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1524px, -1004px, 0px); z-index: -1004;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,100,140);
+                     border-color:#333;
+                     font-size:12px;">33</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1439px, -936px, 0px); z-index: -936;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(13,83,206);
+                     border-color:#333;
+                     font-size:12px;">29</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1581px, -970px, 0px); z-index: -970;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(47,117,221);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1541px, -897px, 0px); z-index: -897;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(47,117,221);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1459px, -873px, 0px); z-index: -873;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(24,94,211);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1280px, -942px, 0px); z-index: -942;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1533px, -936px, 0px); z-index: -936;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(24,94,211);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1379px, -915px, 0px); z-index: -915;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(36,106,217);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1585px, -912px, 0px); z-index: -912;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(84,154,239);
+                     border-color:#333;
+                     font-size:12px;">23</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1589px, -1019px, 0px); z-index: -1019;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1571px, -844px, 0px); z-index: -844;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(36,106,217);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1360px, -977px, 0px); z-index: -977;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(36,106,217);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1290px, -1014px, 0px); z-index: -1014;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(13,83,206);
+                     border-color:#333;
+                     font-size:12px;">29</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1648px, -1232px, 0px); z-index: -1232;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1637px, -1124px, 0px); z-index: -1124;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2147px, -888px, 0px); z-index: -888;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,79,182);
+                     border-color:#333;
+                     font-size:12px;">31</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1652px, -927px, 0px); z-index: -927;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(58,128,226);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2005px, -731px, 0px); z-index: -731;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(99,226,99);
+                     border-color:#333;
+                     font-size:12px;">47</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1741px, -1159px, 0px); z-index: -1159;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1773px, -1020px, 0px); z-index: -1020;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1650px, -997px, 0px); z-index: -997;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1793px, -1135px, 0px); z-index: -1135;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,70,200);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1902px, -790px, 0px); z-index: -790;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,153,34);
+                     border-color:#333;
+                     font-size:12px;">38</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1873px, -909px, 0px); z-index: -909;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(6,76,203);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1992px, -554px, 0px); z-index: -554;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(255,185,0);
+                     border-color:#333;
+                     font-size:12px;">65</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1974px, -928px, 0px); z-index: -928;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1996px, -856px, 0px); z-index: -856;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1951px, -825px, 0px); z-index: -825;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,144,52);
+                     border-color:#333;
+                     font-size:12px;">37</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2004px, -1138px, 0px); z-index: -1138;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(71,141,232);
+                     border-color:#333;
+                     font-size:12px;">24</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2001px, -785px, 0px); z-index: -785;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,150,40);
+                     border-color:#333;
+                     font-size:12px;">38</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1386px, -1150px, 0px); z-index: -1150;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(13,83,206);
+                     border-color:#333;
+                     font-size:12px;">29</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1286px, -1186px, 0px); z-index: -1186;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,140,60);
+                     border-color:#333;
+                     font-size:12px;">37</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1829px, -780px, 0px); z-index: -780;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,170,0);
+                     border-color:#333;
+                     font-size:12px;">40</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1427px, -840px, 0px); z-index: -840;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(60,130,228);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1639px, -745px, 0px); z-index: -745;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,110,120);
+                     border-color:#333;
+                     font-size:12px;">34</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1921px, -657px, 0px); z-index: -657;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(192,247,90);
+                     border-color:#333;
+                     font-size:12px;">54</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1617px, -811px, 0px); z-index: -811;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(47,117,221);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1691px, -874px, 0px); z-index: -874;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(71,141,232);
+                     border-color:#333;
+                     font-size:12px;">24</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1418px, -1091px, 0px); z-index: -1091;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,120,100);
+                     border-color:#333;
+                     font-size:12px;">35</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1884px, -753px, 0px); z-index: -753;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(30,187,30);
+                     border-color:#333;
+                     font-size:12px;">42</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1597px, -1101px, 0px); z-index: -1101;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,100,140);
+                     border-color:#333;
+                     font-size:12px;">33</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1580px, -1170px, 0px); z-index: -1170;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1331px, -1041px, 0px); z-index: -1041;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(24,94,211);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1985px, -668px, 0px); z-index: -668;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(255,207,0);
+                     border-color:#333;
+                     font-size:12px;">63</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1716px, -1106px, 0px); z-index: -1106;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,72,196);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1697px, -1224px, 0px); z-index: -1224;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,100,140);
+                     border-color:#333;
+                     font-size:12px;">33</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1777px, -1175px, 0px); z-index: -1175;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,72,196);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1931px, -1016px, 0px); z-index: -1016;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(60,130,228);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1311px, -839px, 0px); z-index: -839;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(24,94,211);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2150px, -934px, 0px); z-index: -934;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(60,130,228);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2070px, -795px, 0px); z-index: -795;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,170,0);
+                     border-color:#333;
+                     font-size:12px;">40</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1719px, -1067px, 0px); z-index: -1067;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(24,94,211);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2225px, -812px, 0px); z-index: -812;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,130,80);
+                     border-color:#333;
+                     font-size:12px;">36</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2108px, -959px, 0px); z-index: -959;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(36,106,217);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1749px, -964px, 0px); z-index: -964;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(60,130,228);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2177px, -779px, 0px); z-index: -779;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,160,20);
+                     border-color:#333;
+                     font-size:12px;">39</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1324px, -790px, 0px); z-index: -790;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(47,117,221);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1468px, -753px, 0px); z-index: -753;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(60,130,228);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1378px, -697px, 0px); z-index: -697;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(13,83,206);
+                     border-color:#333;
+                     font-size:12px;">29</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1425px, -679px, 0px); z-index: -679;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(36,106,217);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1421px, -734px, 0px); z-index: -734;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(47,117,221);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2016px, -594px, 0px); z-index: -594;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(255,178,0);
+                     border-color:#333;
+                     font-size:12px;">66</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1841px, -1042px, 0px); z-index: -1042;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(36,106,217);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1774px, -794px, 0px); z-index: -794;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,150,40);
+                     border-color:#333;
+                     font-size:12px;">38</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1756px, -858px, 0px); z-index: -858;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,70,200);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2148px, -976px, 0px); z-index: -976;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(108,178,250);
+                     border-color:#333;
+                     font-size:12px;">21</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1865px, -1076px, 0px); z-index: -1076;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(71,141,232);
+                     border-color:#333;
+                     font-size:12px;">24</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1529px, -724px, 0px); z-index: -724;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(24,94,211);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1723px, -1010px, 0px); z-index: -1010;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(24,94,211);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2005px, -897px, 0px); z-index: -897;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,79,182);
+                     border-color:#333;
+                     font-size:12px;">31</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2191px, -847px, 0px); z-index: -847;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,79,182);
+                     border-color:#333;
+                     font-size:12px;">31</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2111px, -841px, 0px); z-index: -841;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,100,140);
+                     border-color:#333;
+                     font-size:12px;">33</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2154px, -835px, 0px); z-index: -835;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1796px, -732px, 0px); z-index: -732;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(45,196,45);
+                     border-color:#333;
+                     font-size:12px;">43</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1856px, -713px, 0px); z-index: -713;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(75,213,75);
+                     border-color:#333;
+                     font-size:12px;">45</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1729px, -704px, 0px); z-index: -704;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(45,196,45);
+                     border-color:#333;
+                     font-size:12px;">43</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1676px, -1100px, 0px); z-index: -1100;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(13,83,206);
+                     border-color:#333;
+                     font-size:12px;">29</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1876px, -858px, 0px); z-index: -858;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,120,100);
+                     border-color:#333;
+                     font-size:12px;">35</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1653px, -671px, 0px); z-index: -671;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,170,0);
+                     border-color:#333;
+                     font-size:12px;">40</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1900px, -582px, 0px); z-index: -582;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(182,249,105);
+                     border-color:#333;
+                     font-size:12px;">53</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2109px, -801px, 0px); z-index: -801;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,150,40);
+                     border-color:#333;
+                     font-size:12px;">38</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1394px, -1191px, 0px); z-index: -1191;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,110,120);
+                     border-color:#333;
+                     font-size:12px;">34</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1993px, -1028px, 0px); z-index: -1028;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(47,117,221);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2200px, -980px, 0px); z-index: -980;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(84,154,239);
+                     border-color:#333;
+                     font-size:12px;">23</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1853px, -663px, 0px); z-index: -663;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(135,247,135);
+                     border-color:#333;
+                     font-size:12px;">49</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1599px, -716px, 0px); z-index: -716;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1898px, -952px, 0px); z-index: -952;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(47,117,221);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1741px, -759px, 0px); z-index: -759;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(15,179,15);
+                     border-color:#333;
+                     font-size:12px;">41</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1921px, -706px, 0px); z-index: -706;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(105,230,105);
+                     border-color:#333;
+                     font-size:12px;">47</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1271px, -1101px, 0px); z-index: -1101;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1487px, -1206px, 0px); z-index: -1206;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,126,88);
+                     border-color:#333;
+                     font-size:12px;">36</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1491px, -1137px, 0px); z-index: -1137;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,108,124);
+                     border-color:#333;
+                     font-size:12px;">34</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1560px, -1227px, 0px); z-index: -1227;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,126,88);
+                     border-color:#333;
+                     font-size:12px;">36</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1302px, -1237px, 0px); z-index: -1237;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1538px, -1135px, 0px); z-index: -1135;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1828px, -866px, 0px); z-index: -866;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1441px, -1055px, 0px); z-index: -1055;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,126,88);
+                     border-color:#333;
+                     font-size:12px;">36</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1342px, -1194px, 0px); z-index: -1194;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2226px, -898px, 0px); z-index: -898;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,79,182);
+                     border-color:#333;
+                     font-size:12px;">31</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2192px, -1041px, 0px); z-index: -1041;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(54,124,225);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2247px, -843px, 0px); z-index: -843;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,108,124);
+                     border-color:#333;
+                     font-size:12px;">34</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1627px, -1059px, 0px); z-index: -1059;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,72,196);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1794px, -949px, 0px); z-index: -949;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1829px, -916px, 0px); z-index: -916;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1689px, -790px, 0px); z-index: -790;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,108,124);
+                     border-color:#333;
+                     font-size:12px;">34</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1559px, -1055px, 0px); z-index: -1055;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2081px, -1039px, 0px); z-index: -1039;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(43,113,220);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1622px, -958px, 0px); z-index: -958;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(36,106,217);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1793px, -1086px, 0px); z-index: -1086;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(84,154,239);
+                     border-color:#333;
+                     font-size:12px;">23</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1823px, -1162px, 0px); z-index: -1162;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1684px, -1265px, 0px); z-index: -1265;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,72,196);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1700px, -911px, 0px); z-index: -911;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(62,132,229);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1677px, -751px, 0px); z-index: -751;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,144,52);
+                     border-color:#333;
+                     font-size:12px;">37</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1678px, -710px, 0px); z-index: -710;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(15,179,15);
+                     border-color:#333;
+                     font-size:12px;">41</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1843px, -1123px, 0px); z-index: -1123;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(84,154,239);
+                     border-color:#333;
+                     font-size:12px;">23</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1455px, -1160px, 0px); z-index: -1160;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,72,196);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2151px, -1031px, 0px); z-index: -1031;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(62,132,229);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1708px, -966px, 0px); z-index: -966;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(52,122,224);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1817px, -829px, 0px); z-index: -829;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,108,124);
+                     border-color:#333;
+                     font-size:12px;">34</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1669px, -824px, 0px); z-index: -824;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(41,111,219);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1285px, -738px, 0px); z-index: -738;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,117,106);
+                     border-color:#333;
+                     font-size:12px;">35</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1624px, -888px, 0px); z-index: -888;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(41,111,219);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2163px, -1072px, 0px); z-index: -1072;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(36,106,217);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1540px, -770px, 0px); z-index: -770;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(35,105,216);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1462px, -714px, 0px); z-index: -714;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(35,105,216);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1948px, -579px, 0px); z-index: -579;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(255,169,0);
+                     border-color:#333;
+                     font-size:12px;">67</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2070px, -909px, 0px); z-index: -909;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,81,178);
+                     border-color:#333;
+                     font-size:12px;">31</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1778px, -913px, 0px); z-index: -913;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(41,111,219);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1701px, -1184px, 0px); z-index: -1184;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,108,124);
+                     border-color:#333;
+                     font-size:12px;">34</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1752px, -1212px, 0px); z-index: -1212;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,79,182);
+                     border-color:#333;
+                     font-size:12px;">31</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1631px, -848px, 0px); z-index: -848;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(41,111,219);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2035px, -984px, 0px); z-index: -984;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(47,117,221);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1908px, -882px, 0px); z-index: -882;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,72,196);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1943px, -496px, 0px); z-index: -496;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(255,172,0);
+                     border-color:#333;
+                     font-size:12px;">67</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1890px, -1163px, 0px); z-index: -1163;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(106,176,248);
+                     border-color:#333;
+                     font-size:12px;">21</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1682px, -1021px, 0px); z-index: -1021;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(32,102,215);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1426px, -785px, 0px); z-index: -785;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(52,122,224);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1946px, -747px, 0px); z-index: -747;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(72,211,72);
+                     border-color:#333;
+                     font-size:12px;">45</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1817px, -1008px, 0px); z-index: -1008;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(19,89,209);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1861px, -1007px, 0px); z-index: -1007;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(52,122,224);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1353px, -837px, 0px); z-index: -837;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(41,111,219);
+                     border-color:#333;
+                     font-size:12px;">27</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1731px, -814px, 0px); z-index: -814;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,108,124);
+                     border-color:#333;
+                     font-size:12px;">34</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1562px, -675px, 0px); z-index: -675;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,72,196);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2089px, -876px, 0px); z-index: -876;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,90,160);
+                     border-color:#333;
+                     font-size:12px;">32</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2114px, -1061px, 0px); z-index: -1061;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(78,148,236);
+                     border-color:#333;
+                     font-size:12px;">24</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2208px, -940px, 0px); z-index: -940;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(52,122,224);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1922px, -617px, 0px); z-index: -617;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(255,210,0);
+                     border-color:#333;
+                     font-size:12px;">63</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1974px, -612px, 0px); z-index: -612;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(255,171,0);
+                     border-color:#333;
+                     font-size:12px;">67</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1682px, -1140px, 0px); z-index: -1140;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,72,196);
+                     border-color:#333;
+                     font-size:12px;">30</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1324px, -1093px, 0px); z-index: -1093;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(24,94,211);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1512px, -1102px, 0px); z-index: -1102;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,79,182);
+                     border-color:#333;
+                     font-size:12px;">31</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1839px, -967px, 0px); z-index: -967;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(60,130,228);
+                     border-color:#333;
+                     font-size:12px;">25</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2039px, -1022px, 0px); z-index: -1022;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(24,94,211);
+                     border-color:#333;
+                     font-size:12px;">28</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1626px, -1178px, 0px); z-index: -1178;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,120,100);
+                     border-color:#333;
+                     font-size:12px;">35</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1367px, -1094px, 0px); z-index: -1094;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(0,126,88);
+                     border-color:#333;
+                     font-size:12px;">36</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1512px, -816px, 0px); z-index: -816;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(46,116,221);
+                     border-color:#333;
+                     font-size:12px;">26</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(1952px, -535px, 0px); z-index: -535;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(205,245,72);
+                     border-color:#333;
+                     font-size:12px;">55</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -14px; margin-top: -14px; width: 28px; height: 28px; transform: translate3d(2026px, -1063px, 0px); z-index: -1063;"><div class="dot" style="width:28px;height:28px;
+                     background:rgb(62,132,229);
+                     border-color:#333;
+                     font-size:12px;">25</div></div></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(3837.5px, 5865.71px, 0px) scale(32);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"><div class="leaflet-control-layers leaflet-control-layers-expanded leaflet-control" aria-haspopup="true"><a class="leaflet-control-layers-toggle" href="#" title="Layers" role="button"></a><section class="leaflet-control-layers-list"><div class="leaflet-control-layers-base"><label><span><input type="radio" class="leaflet-control-layers-selector" name="leaflet-base-layers_76" checked="checked"><span> OpenStreetMap</span></span></label></div><div class="leaflet-control-layers-separator"></div><div class="leaflet-control-layers-overlays"><label><span><input type="checkbox" class="leaflet-control-layers-selector" checked=""><span> Temperature (°F)</span></span></label><label><span><input type="checkbox" class="leaflet-control-layers-selector"><span> Dew Point (°F)</span></span></label><label><span><input type="checkbox" class="leaflet-control-layers-selector"><span> Wind Speed (mph)</span></span></label><label><span><input type="checkbox" class="leaflet-control-layers-selector"><span> Wind Arrows</span></span></label><label><span><input type="checkbox" class="leaflet-control-layers-selector"><span> Wind Gusts (mph)</span></span></label><label><span><input type="checkbox" class="leaflet-control-layers-selector"><span> Visibility (mi)</span></span></label><label><span><input type="checkbox" class="leaflet-control-layers-selector"><span> Pressure (trend)</span></span></label><label><span><input type="checkbox" class="leaflet-control-layers-selector"><span> Weather Codes</span></span></label><label><span><input type="checkbox" class="leaflet-control-layers-selector"><span> Alerts (WWA)</span></span></label><label><span><input type="checkbox" class="leaflet-control-layers-selector"><span> Daily wind particles</span></span></label></div></section></div></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control">© OpenStreetMap contributors</div></div></div></div>
+<img id="brandLogo" src="logo.png" alt="Weather Workshops">
 
 <div class="panel">
   <div style="font-size:13px;margin-bottom:6px">Apr 2018 Case Study</div>
@@ -71,7 +489,7 @@
   <!-- Time controls for METAR + Alerts -->
   <div class="row">
     <button class="btn" id="backBtn">◀ Time</button>
-    <div class="mono" id="timeLabel">2018-04-14 15Z</div>
+    <div class="mono" id="timeLabel">2018-04-14 18Z</div>
     <button class="btn" id="fwdBtn">Time ▶</button>
   </div>
 
@@ -91,7 +509,7 @@
   </div>
 
   <div class="row">
-    <span class="tiny" id="status">Loading…</span>
+    <span class="tiny" id="status">Stations shown: 10499/10499 (minSep 38px).</span>
   </div>
 
   <div class="tiny">
@@ -105,7 +523,7 @@
 ------------------------------------------------------------ */
 const map = L.map("map", { zoomControl:true }).setView([44.2, -96.5], 6);
 
-const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+const osm = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
   maxZoom: 19,
   attribution: "© OpenStreetMap contributors"
 }).addTo(map);
@@ -253,6 +671,131 @@ const alertsLayer = L.geoJSON(null);
 // Particles: placeholder for checkbox + actual velocity layer
 const particlesToggle = L.layerGroup();
 let particlesLayer = null;
+
+
+  // =========================
+  // EXTRA LAYERS: Composite Radar (obs), MODIS, Jet Stream
+  // =========================
+
+  // --- Composite radar (PNG frames in ./radar_frames/) ---
+  obsRadarToggle = L.layerGroup();
+  // Initialize first frame once toggle exists
+  try { updateObsRadar(); } catch(e) { console.warn("updateObsRadar init", e); }
+// this is what goes in the toggle box
+  let obsRadarOverlay = null;
+  let obsRadarBounds = null;
+
+  // Manual nudge requested: ~60 miles south and ~15 miles east (approx degrees)
+  const RADAR_LAT_SHIFT = -0.87;  // deg latitude (~60 mi)
+  const RADAR_LON_SHIFT =  0.27;  // deg longitude (~15 mi near 45N)
+
+  function ymd(dt){
+    const y = dt.getUTCFullYear();
+    const m = String(dt.getUTCMonth()+1).padStart(2,'0');
+    const d = String(dt.getUTCDate()).padStart(2,'0');
+    return `${y}${m}${d}`;
+  }
+  function hhmm(dt){
+    const h = String(dt.getUTCHours()).padStart(2,'0');
+    const min = String(dt.getUTCMinutes()).padStart(2,'0');
+    return `${h}${min}`;
+  }
+
+  // Snap to nearest 3-hour frame at minute 00
+  function snap3h(dt){
+    const t = new Date(dt.getTime());
+    t.setUTCMinutes(0,0,0);
+    const h = t.getUTCHours();
+    const snapped = Math.round(h/3)*3;
+    t.setUTCHours((snapped+24)%24);
+    return t;
+  }
+
+  function radarFilenameFor(dt){
+    const t = snap3h(dt);
+    return `radar_frames/n0q_${ymd(t)}${String(t.getUTCHours()).padStart(2,'0')}00.png`;
+  }
+
+  function applyRadarBoundsShift(b){
+    const s = b.south + RADAR_LAT_SHIFT;
+    const n = b.north + RADAR_LAT_SHIFT;
+    const w = b.west  + RADAR_LON_SHIFT;
+    const e = b.east  + RADAR_LON_SHIFT;
+    return [[s,w],[n,e]];
+  }
+
+  // Load bounds once
+  fetch('radar_frames/radar_bounds.json')
+    .then(r => r.ok ? r.json() : Promise.reject(new Error('Missing radar_bounds.json')))
+    .then(b => {
+      obsRadarBounds = applyRadarBoundsShift(b);
+      // If the layer is toggled on already, draw immediately
+    })
+    .catch(err => console.warn('Radar bounds not loaded:', err));
+
+  function updateObsRadar(){
+    if (!obsRadarBounds) return;
+    const file = radarFilenameFor(current);
+    // Remove old overlay
+    if (obsRadarOverlay){
+      obsRadarToggle.removeLayer(obsRadarOverlay);
+      obsRadarOverlay = null;
+    }
+    obsRadarOverlay = L.imageOverlay(file, obsRadarBounds, {opacity: 0.65, className:'obs-radar'});
+    obsRadarToggle.addLayer(obsRadarOverlay);
+    // If toggle currently on, keep it on the map
+    if (map.hasLayer(obsRadarToggle)){
+      obsRadarToggle.addTo(map);
+    }
+  }
+
+  // --- MODIS True Color (NASA GIBS) ---
+  const modisToggle = L.tileLayer(
+    'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/2018-04-14/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg',
+    {opacity: 0.85, attribution: 'NASA GIBS'}
+  );
+
+  // --- Jet Stream particles (Leaflet-Velocity) ---
+  const jetToggle = L.layerGroup();
+  let jetVelocity = null;
+
+  function tryFetchFirst(urls){
+    // returns promise that resolves with first successful JSON
+    let chain = Promise.reject();
+    urls.forEach(u=>{
+      chain = chain.catch(()=>fetch(u).then(r=>r.ok ? r.json() : Promise.reject()));
+    });
+    return chain;
+  }
+
+  function loadJetOnce(){
+    if (jetVelocity) return;
+    const candidates = [
+      'jetstream_2018041418z.json',
+      'jetstream_2018041418Z.json',
+      'jetstream_20180414_18z.json',
+      'jetstream_20180414_18Z.json',
+      'jetstream_18z.json',
+      'jetstream.json'
+    ];
+    tryFetchFirst(candidates)
+      .then(data=>{
+        jetVelocity = L.velocityLayer({
+          displayValues: false,
+          displayOptions: { velocityType: 'Jet Stream' },
+          data: data,
+          maxVelocity: 120
+        });
+        jetToggle.addLayer(jetVelocity);
+        if (map.hasLayer(jetToggle)) jetToggle.addTo(map);
+      })
+      .catch(()=>console.warn('Jet stream JSON not found (expected one of):', candidates.join(', ')));
+  }
+
+  map.on('overlayadd', (e)=>{
+    if (e.layer === jetToggle) loadJetOnce();
+  });
+
 
 L.control.layers(
   { "OpenStreetMap": osm },
@@ -970,5 +1513,5 @@ refreshAll().catch(err => {
   setStatus("Error: " + err.message);
 });
 </script>
+
 </body>
-</html>
